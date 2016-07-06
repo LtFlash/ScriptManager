@@ -16,6 +16,7 @@ namespace ScriptManager.Scripts
         public CalloutScriptBase()
         {
             AddStage(Initialize);
+            AddStage(WaitForAcceptKey);
             AddStage(Accepted);
             AddStage(NotAccepted);
 
