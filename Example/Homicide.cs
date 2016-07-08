@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ScriptManager.Example
+﻿namespace ScriptManager.Example
 {
-    class Homicide : Scripts.BaseScript
+    class Homicide : Scripts.CalloutScriptBase
     {
-        ScriptManager _stagesOfInvestigation = new ScriptManager();
+        Managers.ScriptManager _stagesOfInvestigation = new Managers.ScriptManager();
 
         public Homicide()
         {

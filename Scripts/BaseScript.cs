@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rage;
 
 namespace ScriptManager.Scripts
 {
-    internal abstract class BaseScript : IBaseScript
+    public abstract class BaseScript : IBaseScript
     {
         //PUBLIC
         public bool HasFinished { get; private set; } = false;
@@ -22,6 +19,7 @@ namespace ScriptManager.Scripts
         {
             public Action Act;
             public bool Active;
+
             public Stage(Action act, bool active)
             {
                 Act = act;
@@ -34,6 +32,14 @@ namespace ScriptManager.Scripts
             _process = new GameFiber(InternalProcess);
 
             RegisterStages();
+        }
+
+        public abstract bool CanBeStarted();
+
+        public void Start()
+        {
+            _process.Start();
+            IsRunning = true;
         }
 
         private void RegisterStages()
@@ -88,14 +94,7 @@ namespace ScriptManager.Scripts
             _canRun = false;
             _process.Abort();
             Completed = completed;
-            HasFinished = true;
             End();
-        }
-
-        public void Start()
-        {
-            _process.Start();
-            IsRunning = true;
         }
 
         public virtual void Initialize()

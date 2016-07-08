@@ -1,26 +1,28 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Rage;
+using System;
 
-namespace ScriptManager
+namespace ScriptManager.Managers
 {
-    internal abstract class ScriptManagerBase
+    public abstract class ScriptManagerBase
     {
         //PRIVATE
         private GameFiber _process;
-        private List<ScriptStatus> _scripts = new List<ScriptStatus>();
+        protected List<ScriptStatus> _scripts = new List<ScriptStatus>();
         private int _currentScript = 0;
-        private class ScriptStatus
+        protected class ScriptStatus
         {
             public string Id;
             public Scripts.IBaseScript Script;
-            public bool Status;
-            //public string NextScriptToRunId;
-            public ScriptStatus(string id, Scripts.IBaseScript script, bool isRunning)
+            public string NextScriptToRunId;
+            public bool Processed = false;
+
+            public ScriptStatus(string id, Scripts.IBaseScript script, string nextScriptToRunId = "")
             {
                 Id = id;
                 Script = script;
-                Status = isRunning;
+                NextScriptToRunId = nextScriptToRunId;
             }
         }
         private bool _canRun = true;
@@ -34,10 +36,14 @@ namespace ScriptManager
         //public void StartScriptManager()
         //{
         //}
+        //public void AddScript(string id, Type type, bool start = false)
+        //{
+        //    Scripts.IBaseScript script = (Scripts.IBaseScript)Activator.CreateInstance(type);
+        //}
 
-        public void AddScript(string id, Scripts.IBaseScript script, bool start = false)
+        public void AddScript(string id, Scripts.IBaseScript script, bool start = false, string nextScriptToRunId = "")
         {
-            _scripts.Add(new ScriptStatus(id, script, start));
+            _scripts.Add(new ScriptStatus(id, script, nextScriptToRunId));
             if (start) StartScript(id);
         }
 
@@ -58,17 +64,25 @@ namespace ScriptManager
         {
             while(_canRun)
             {
-                //next script will be automatically started -> make config for this
-                //if(_scripts[_currentScript].Script.IsRunning)
+                //add a mechanism of starting inactive scripts when added with no autostart;
+                //add a bool var?
+
+                //AutoRun of the next script
+                //for (int i = 0; i < _scripts.Count; i++)
                 //{
-                //    if(_scripts[_currentScript].Script.HasFinished)
+                //    if (_scripts[i].Processed) return;
+
+                //    if(_scripts[i].Script.HasFinished)
                 //    {
-                //        if (_scripts.Count > _currentScript - 1)
+                //        if (_scripts[i].NextScriptToRunId != "")
                 //        {
-                //            _scripts[_currentScript].Script.Start();
+                //            StartScript(_scripts[i].NextScriptToRunId);
                 //        }
+
+                //        _scripts[i].Processed = true;
                 //    }
                 //}
+
                 GameFiber.Yield();
             }
         }

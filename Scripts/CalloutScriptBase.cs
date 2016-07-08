@@ -1,8 +1,9 @@
-﻿using Rage;
+﻿using System;
+using Rage;
 
 namespace ScriptManager.Scripts
 {
-    internal abstract class CalloutScriptBase : BaseScript, ICalloutScript
+    public abstract class CalloutScriptBase : BaseScript, ICalloutScript
     {
         private const double TIME_CALL_NOT_ACCEPTED = 10000;
         private System.Windows.Forms.Keys _keyAccept = System.Windows.Forms.Keys.Y;
@@ -19,6 +20,11 @@ namespace ScriptManager.Scripts
             AddStage(NotAccepted);
 
             ActivateStage(Initialize);
+        }
+
+        public override bool CanBeStarted()
+        {
+            return true;
         }
 
         public override void Initialize()
