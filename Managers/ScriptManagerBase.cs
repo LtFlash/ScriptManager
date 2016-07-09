@@ -5,7 +5,7 @@ using System;
 
 namespace ScriptManager.Managers
 {
-    public abstract class ScriptManagerBase
+    public abstract class ScriptManagerBase : IScriptManager
     {
         //TODO: operator [] to get ScriptStatus from outside
 
@@ -19,7 +19,7 @@ namespace ScriptManager.Managers
         public class ScriptStatus
         {
             public string Id { get; private set; }
-            public Type type { get; private set; }
+            public Type TypeOfBaseScript { get; private set; }
             public Scripts.IBaseScript Script { get; private set; }
             public string NextScriptToRunId { get; private set; }
             public bool Processed { get; set; } = false;
@@ -41,7 +41,7 @@ namespace ScriptManager.Managers
 
             public void Start(bool checkIfCanBeStarted)
             {
-                Scripts.IBaseScript scriptToStart = CreateInstance(type);
+                Scripts.IBaseScript scriptToStart = CreateInstance(TypeOfBaseScript);
  
                 if(!checkIfCanBeStarted || scriptToStart.CanBeStarted())
                 {
@@ -58,7 +58,7 @@ namespace ScriptManager.Managers
             public ScriptStatus(string id, Type typeOfBaseScript, string nextScriptToRunId = "")
             {
                 Id = id;
-                type = typeOfBaseScript;
+                TypeOfBaseScript = typeOfBaseScript;
                 NextScriptToRunId = nextScriptToRunId;
             }
         }
