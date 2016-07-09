@@ -74,10 +74,14 @@
     <Compile Include="Scripts\BaseScript.cs" />
     <Compile Include="Scripts\CalloutHourRangeScriptBase.cs" />
     <Compile Include="Scripts\CalloutScriptBase.cs" />
+    <Compile Include="Scripts\CaseController.cs" />
     <Compile Include="Scripts\Interfaces.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /Y "$(TargetPath)" "D:\Software\Rockstar Games\Grand Theft Auto V\$(TargetFileName)"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

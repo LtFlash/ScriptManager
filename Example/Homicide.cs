@@ -2,11 +2,12 @@
 {
     class Homicide : Scripts.CalloutScriptBase
     {
-        Managers.ScriptManager _stagesOfInvestigation = new Managers.ScriptManager();
+        Managers.TimerBasedScriptManager _stagesOfInvestigation = new Managers.TimerBasedScriptManager();
 
         public Homicide()
         {
-            _stagesOfInvestigation.AddScript("csi", new Homicide_CSI(), true);
+            _stagesOfInvestigation.AddScript("csi", typeof(Homicide_CSI));
+            _stagesOfInvestigation.StartScript("csi", false);
         }
 
         public override void Process()

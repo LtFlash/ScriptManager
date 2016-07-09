@@ -5,6 +5,7 @@ namespace ScriptManager.Scripts
 {
     public abstract class CalloutScriptBase : BaseScript, ICalloutScript
     {
+        //PRIVATE
         private const double TIME_CALL_NOT_ACCEPTED = 10000;
         private System.Windows.Forms.Keys _keyAccept = System.Windows.Forms.Keys.Y;
         private System.Timers.Timer _callNotAcceptedTimer = new System.Timers.Timer(TIME_CALL_NOT_ACCEPTED);
@@ -48,6 +49,12 @@ namespace ScriptManager.Scripts
             _blipArea.Color = _blipAreaColor;
         }
 
+        //TODO: to use with ShowAreaBlip()
+        //private void SetMinimapZoom()
+        //{
+        //    Game.SetRadarZoomLevelThisFrame(0f);
+        //}
+
         private void RemoveAreaBlip()
         {
             if (_blipArea.Exists()) _blipArea.Delete();
@@ -73,7 +80,7 @@ namespace ScriptManager.Scripts
                 RemoveAreaBlip();
                 SwapStages(WaitForAcceptKey, NotAccepted);
                 _callNotAcceptedTimer.Dispose();
-            };
+            }
         }
 
         public virtual void Accepted()
@@ -84,6 +91,13 @@ namespace ScriptManager.Scripts
         public virtual void NotAccepted()
         {
             SetScriptFinished(false);
+        }
+
+        public override void End()
+        {
+            Game.LogVerbose("CalloutScriptBase.End");
+
+            base.End();
         }
     }
 }

@@ -2,11 +2,12 @@
 {
     class Main
     {
-        Managers.ScriptManager _cases = new Managers.ScriptManager();
+        Managers.TimerBasedScriptManager _cases = new Managers.TimerBasedScriptManager();
 
         public void AddCases()
         {
-            _cases.AddScript("homicide", new Homicide(), true);
+            _cases.AddScript("homicide", typeof(Homicide));
+            _cases.StartScript("homicide", true);
         }
     }
 }

@@ -17,27 +17,28 @@ namespace ScriptManager.Scripts
         private List<Stage> _stages = new List<Stage>();
         private class Stage
         {
-            public Action Act;
+            public Action Function;
             public bool Active;
 
             public Stage(Action act, bool active)
             {
-                Act = act;
+                Function = act;
                 Active = active;
             }
         }
 
         public BaseScript()
         {
-            _process = new GameFiber(InternalProcess);
-
-            RegisterStages();
+            //empty, ctor called to check CanBeStarted()
         }
 
         public abstract bool CanBeStarted();
 
         public void Start()
         {
+            _process = new GameFiber(InternalProcess);
+            RegisterStages();
+            ActivateStage(Initialize);
             _process.Start();
             IsRunning = true;
         }
@@ -47,8 +48,6 @@ namespace ScriptManager.Scripts
             AddStage(Initialize);
             AddStage(Process);
             AddStage(End);
-
-            ActivateStage(Initialize);
         }
 
         public void AddStage(Action stage)
@@ -58,12 +57,12 @@ namespace ScriptManager.Scripts
 
         public void ActivateStage(Action stage)
         {
-            _stages.Find(a => a.Act == stage).Active = true;
+            _stages.Find(a => a.Function == stage).Active = true;
         }
 
         public void DeactivateStage(Action stage)
         {
-            _stages.Find(a => a.Act == stage).Active = false;
+            _stages.Find(a => a.Function == stage).Active = false;
         }
 
         public void SwapStages(Action toDisable, Action toEnable)
@@ -85,16 +84,17 @@ namespace ScriptManager.Scripts
         {
             for (int i = 0; i < _stages.Count; i++)
             {
-                if (_stages[i].Active) _stages[i].Act();
+                if (_stages[i].Active) _stages[i].Function();
             }
         }
 
         protected void SetScriptFinished(bool completed)
         {
-            _canRun = false;
-            _process.Abort();
             Completed = completed;
             End();
+
+            //Abort() has to be the last as it does not return control to function!
+            _process.Abort(); 
         }
 
         public virtual void Initialize()
@@ -109,7 +109,7 @@ namespace ScriptManager.Scripts
 
         public virtual void End()
         {
-            _process.Abort();
+            _canRun = false;
             HasFinished = true;
             IsRunning = false;
         }
