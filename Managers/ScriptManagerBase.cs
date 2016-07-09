@@ -22,7 +22,7 @@ namespace ScriptManager.Managers
             public Type type { get; private set; }
             public Scripts.IBaseScript Script { get; private set; }
             public string NextScriptToRunId { get; private set; }
-            public bool Processed { get; private set; } = false;
+            public bool Processed { get; set; } = false;
 
             public bool FinishedSuccessfully
             {
