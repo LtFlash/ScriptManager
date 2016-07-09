@@ -3,7 +3,7 @@ using Rage;
 
 namespace ScriptManager.Scripts
 {
-    public class CalloutHourRangeScriptBase : CalloutScriptBase
+    public abstract class CalloutHourRangeScriptBase : CalloutScriptBase
     {
         public TimeSpan HourStart { get; private set; }
         public TimeSpan HourEnd { get; private set; }

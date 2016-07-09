@@ -1,5 +1,4 @@
-﻿using System;
-using Rage;
+﻿using Rage;
 
 namespace ScriptManager.Scripts
 {
@@ -91,13 +90,6 @@ namespace ScriptManager.Scripts
         public virtual void NotAccepted()
         {
             SetScriptFinished(false);
-        }
-
-        public override void End()
-        {
-            Game.LogVerbose("CalloutScriptBase.End");
-
-            base.End();
         }
     }
 }

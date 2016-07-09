@@ -17,14 +17,12 @@ namespace ScriptManager.Scripts
 
         public override void Initialize()
         {
-            base.Initialize();
         }
 
         public override void Process()
         {
             //if all finished SetScriptFinished
 
-            base.Process();
         }
 
         public override void End()

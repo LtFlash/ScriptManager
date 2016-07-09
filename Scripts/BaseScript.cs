@@ -38,16 +38,16 @@ namespace ScriptManager.Scripts
         {
             _process = new GameFiber(InternalProcess);
             RegisterStages();
-            ActivateStage(Initialize);
+            ActivateStage(InternalInitialize);
             _process.Start();
             IsRunning = true;
         }
 
         private void RegisterStages()
         {
-            AddStage(Initialize);
+            AddStage(InternalInitialize);
             AddStage(Process);
-            AddStage(End);
+            AddStage(InternalEnd);
         }
 
         public void AddStage(Action stage)
@@ -91,27 +91,31 @@ namespace ScriptManager.Scripts
         protected void SetScriptFinished(bool completed)
         {
             Completed = completed;
-            End();
+            InternalEnd();
 
             //Abort() has to be the last as it does not return control to function!
             _process.Abort(); 
         }
 
-        public virtual void Initialize()
+        private void InternalInitialize()
         {
+            Initialize();
             SwapStages(Initialize, Process);
         }
 
-        public virtual void Process()
-        {
+        public abstract void Initialize();
 
-        }
+        public abstract void Process();
 
-        public virtual void End()
+        private void InternalEnd()
         {
             _canRun = false;
             HasFinished = true;
             IsRunning = false;
+
+            End();
         }
+
+        public abstract void End();
     }
 }

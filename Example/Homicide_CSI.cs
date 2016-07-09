@@ -20,12 +20,10 @@ namespace ScriptManager.Example
 
         public override void Process()
         {
-            base.Process();
         }
 
         public override void End()
         {
-            base.End();
         }
     }
 }
