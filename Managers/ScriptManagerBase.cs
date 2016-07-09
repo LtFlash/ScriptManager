@@ -31,6 +31,14 @@ namespace ScriptManager.Managers
                     return Script != null && Script.Completed;
                 }
             }
+
+            public bool FinishedUnsuccessfully
+            {
+                get
+                {
+                    return Script != null && Script.HasFinished && !Script.Completed;                }
+            }
+
             public bool IsRunning
             {
                 get

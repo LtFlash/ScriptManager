@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ScriptManager.Managers
+﻿namespace ScriptManager.Managers
 {
     public class SequentialScriptManager : ScriptManagerBase
     {
@@ -22,7 +16,13 @@ namespace ScriptManager.Managers
                 if(_scripts[i].FinishedSuccessfully)
                 {
                     StartScript(_scripts[i].NextScriptToRunId, true);
+
                     _scripts[i].Processed = true;
+                }
+                else if(_scripts[i].FinishedUnsuccessfully)
+                {
+                    //restart the same script
+                    _scripts[i].Start(true);
                 }
             }
         }
