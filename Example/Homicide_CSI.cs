@@ -1,28 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ScriptManager.Example
 {
     class Homicide_CSI : Scripts.CalloutScriptBase
     {
-        public override void Initialize()
+        protected override bool Initialize()
         {
-            base.Initialize();
+            return true;
         }
 
-        public override void Accepted()
+        protected override bool Accepted()
         {
-            base.Accepted();
+            return true;
         }
 
-        public override void Process()
+        protected override void NotAccepted()
         {
         }
 
-        public override void End()
+        protected override void Process()
+        {
+        }
+
+        protected override void End()
         {
         }
     }

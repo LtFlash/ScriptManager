@@ -74,6 +74,7 @@
     <Compile Include="Managers\TimerBasedScriptManager.cs" />
     <Compile Include="Managers\ScriptManagerBase.cs" />
     <Compile Include="Scripts\BaseScript.cs" />
+    <Compile Include="Scripts\BasicScript.cs" />
     <Compile Include="Scripts\CalloutHourRangeScriptBase.cs" />
     <Compile Include="Scripts\CalloutScriptBase.cs" />
     <Compile Include="Scripts\CaseController.cs" />

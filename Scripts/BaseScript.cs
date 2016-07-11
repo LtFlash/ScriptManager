@@ -4,11 +4,11 @@ using Rage;
 
 namespace ScriptManager.Scripts
 {
-    public abstract class BaseScript : IBaseScript
+    public abstract class BaseScript
     {
         //PUBLIC
         public bool HasFinished { get; private set; } = false;
-        public bool Completed { get; private set; } = false;
+        public bool Completed { get; protected set; } = false;
         public bool IsRunning { get; private set; } = false;
 
         //PRIVATE
@@ -37,35 +37,36 @@ namespace ScriptManager.Scripts
         public void Start()
         {
             _process = new GameFiber(InternalProcess);
-            RegisterStages();
-            ActivateStage(InternalInitialize);
             _process.Start();
             IsRunning = true;
         }
 
-        private void RegisterStages()
+        public void Stop()
         {
-            AddStage(InternalInitialize);
-            AddStage(Process);
-            AddStage(InternalEnd);
+            _canRun = false;
+            HasFinished = true;
+            IsRunning = false;
+
+            //Abort() has to be the last as it does not return control to function!
+            _process.Abort();
         }
 
-        public void AddStage(Action stage)
+        protected void AddStage(Action stage)
         {
             _stages.Add(new Stage(stage, false));
         }
 
-        public void ActivateStage(Action stage)
+        protected void ActivateStage(Action stage)
         {
             _stages.Find(a => a.Function == stage).Active = true;
         }
 
-        public void DeactivateStage(Action stage)
+        protected void DeactivateStage(Action stage)
         {
             _stages.Find(a => a.Function == stage).Active = false;
         }
 
-        public void SwapStages(Action toDisable, Action toEnable)
+        protected void SwapStages(Action toDisable, Action toEnable)
         {
             DeactivateStage(toDisable);
             ActivateStage(toEnable);
@@ -88,34 +89,8 @@ namespace ScriptManager.Scripts
             }
         }
 
-        protected void SetScriptFinished(bool completed)
-        {
-            Completed = completed;
-            InternalEnd();
-
-            //Abort() has to be the last as it does not return control to function!
-            _process.Abort(); 
-        }
-
-        private void InternalInitialize()
-        {
-            Initialize();
-            SwapStages(Initialize, Process);
-        }
-
-        public abstract void Initialize();
-
-        public abstract void Process();
-
-        private void InternalEnd()
-        {
-            _canRun = false;
-            HasFinished = true;
-            IsRunning = false;
-
-            End();
-        }
-
-        public abstract void End();
+        protected abstract bool Initialize();
+        protected abstract void Process();
+        protected abstract void End();
     }
 }

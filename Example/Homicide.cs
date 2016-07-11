@@ -1,6 +1,8 @@
-﻿namespace ScriptManager.Example
+﻿using System;
+
+namespace ScriptManager.Example
 {
-    class Homicide : Scripts.CalloutScriptBase
+    class Homicide : Scripts.BaseScript
     {
         Managers.TimerBasedScriptManager _stagesOfInvestigation = new Managers.TimerBasedScriptManager();
 
@@ -10,11 +12,21 @@
             _stagesOfInvestigation.StartScript("csi", false);
         }
 
-        public override void Process()
+        public override bool CanBeStarted()
+        {
+            return true;
+        }
+
+        protected override bool Initialize()
+        {
+            return true;
+        }
+
+        protected override void Process()
         {
         }
 
-        public override void End()
+        protected override void End()
         {
         }
     }

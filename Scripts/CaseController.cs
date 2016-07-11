@@ -14,18 +14,17 @@ namespace ScriptManager.Scripts
         {
             return true;
         }
-
-        public override void Initialize()
+        protected override bool Initialize()
         {
+            return true;
         }
-
-        public override void Process()
+        protected override void Process()
         {
             //if all finished SetScriptFinished
 
         }
 
-        public override void End()
+        protected override void End()
         {
         }
     }
