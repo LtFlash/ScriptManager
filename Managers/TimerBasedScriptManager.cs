@@ -1,5 +1,4 @@
-﻿using System;
-using Rage;
+﻿using Rage;
 
 namespace ScriptManager.Managers
 {
@@ -38,7 +37,6 @@ namespace ScriptManager.Managers
             if (IsAnyScriptRunning()) return;
 
             ScriptStatus _scriptToRun = GetNextScriptReadyToRun();
-            Game.LogVerbose("_script to run null: " + (_scriptToRun == null));
 
             //start new script inside a GameFiber of the main loop
             _scriptToRunInFiber = _scriptToRun;
@@ -50,7 +48,6 @@ namespace ScriptManager.Managers
         {
             //FindLastIndex returns -1 when no id found
             int _idLastScript = _scripts.FindLastIndex(s => s.FinishedSuccessfully);
-            Game.LogVerbose("_idLastScript: " + _idLastScript);
 
             //no index found
             if (_idLastScript == -1) return _scripts.Count > 0 ? _scripts[0] : null;
@@ -64,7 +61,6 @@ namespace ScriptManager.Managers
         private bool IsAnyScriptRunning()
         {
             int noOfRunningScripts = _scripts.FindAll(s => s.IsRunning).Count;
-            Game.LogVerbose("IsAnyScriptRunning.Count: " + noOfRunningScripts);
             return noOfRunningScripts > 0;
         }
     }

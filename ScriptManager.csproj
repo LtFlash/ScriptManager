@@ -67,7 +67,6 @@
     <Compile Include="Example\Homicide.cs" />
     <Compile Include="Example\Homicide_CSI.cs" />
     <Compile Include="Example\Main.cs" />
-    <Compile Include="Main.cs" />
     <Compile Include="Managers\Interfaces.cs" />
     <Compile Include="Managers\SequentialScriptManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

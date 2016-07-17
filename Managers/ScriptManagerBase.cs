@@ -7,20 +7,17 @@ namespace ScriptManager.Managers
 {
     public abstract class ScriptManagerBase : IScriptManager
     {
-        //TODO: operator [] to get ScriptStatus from outside
-
-        //PRIVATE
         protected ScriptStatus _scriptToRunInFiber { get; set; }
-
-        private GameFiber _process;
         protected List<ScriptStatus> _scripts = new List<ScriptStatus>();
+        //PRIVATE
+        private GameFiber _process;
         private bool _canRun = true;
 
         public class ScriptStatus
         {
             public string Id { get; private set; }
             public Type TypeOfBaseScript { get; private set; }
-            public Scripts.IBaseScript Script { get; private set; }
+            public Scripts.IScript Script { get; private set; }
             public string NextScriptToRunId { get; private set; }
             public bool Processed { get; set; } = false;
 
@@ -36,7 +33,9 @@ namespace ScriptManager.Managers
             {
                 get
                 {
-                    return Script != null && Script.HasFinished && !Script.Completed;                }
+                    return Script != null && Script.HasFinished && !Script.Completed;
+
+                }
             }
 
             public bool IsRunning
@@ -49,7 +48,7 @@ namespace ScriptManager.Managers
 
             public void Start(bool checkIfCanBeStarted)
             {
-                Scripts.IBaseScript scriptToStart = CreateInstance(TypeOfBaseScript);
+                Scripts.IScript scriptToStart = CreateInstance(TypeOfBaseScript);
  
                 if(!checkIfCanBeStarted || scriptToStart.CanBeStarted())
                 {
@@ -58,9 +57,9 @@ namespace ScriptManager.Managers
                 }
             }
 
-            private Scripts.IBaseScript CreateInstance(Type type)
+            private Scripts.IScript CreateInstance(Type type)
             {
-                return (Scripts.IBaseScript)Activator.CreateInstance(type);
+                return (Scripts.IScript)Activator.CreateInstance(type);
             }
 
             public ScriptStatus(string id, Type typeOfBaseScript, string nextScriptToRunId = "")
@@ -77,9 +76,6 @@ namespace ScriptManager.Managers
             _process.Start();
         }
 
-        //public void StartScriptManager()
-        //{
-        //}
         public ScriptStatus this[string id]
         {
             get
@@ -90,7 +86,7 @@ namespace ScriptManager.Managers
 
         public void AddScript(string id, Type type)
         {
-            if (type.GetInterfaces().Contains(typeof(Scripts.IBaseScript)))
+            if (type.GetInterfaces().Contains(typeof(Scripts.IScript)))
             {
                 _scripts.Add(new ScriptStatus(id, type, ""));
             }

@@ -10,6 +10,10 @@ namespace ScriptManager.Scripts
         private System.Timers.Timer _callNotAcceptedTimer = new System.Timers.Timer(TIME_CALL_NOT_ACCEPTED);
         private bool _timeElapsed = false;
         private Blip _blipArea;
+        private Blip _blipRoute;
+        private float _blipRouteRadius;
+        private Vector3 _blipRoutePosition;
+        private const float BLIP_ALPHA = 0.3f;
         private bool _zoomOutMinimap = false;
         private readonly System.Drawing.Color _blipAreaColor = System.Drawing.Color.Blue;
 
@@ -26,6 +30,7 @@ namespace ScriptManager.Scripts
             AddStage(Process);
             AddStage(InternalNotAccepted);
             AddStage(InternalEnd);
+            AddStage(RemoveAreaWhenClose);
 
             ActivateStage(InternalInitialize);
         }
@@ -61,10 +66,36 @@ namespace ScriptManager.Scripts
         {
             _blipArea = new Blip(position, radius);
             _blipArea.Color = _blipAreaColor;
-            _blipArea.Alpha = 0.3f; //max val == 1f
+            _blipArea.Alpha = BLIP_ALPHA; //max val == 1f
 
             _zoomOutMinimap = zoomOutMinimap;
             if (flashMinimap) FlashMinimap();
+        }
+
+        protected void ShowAreaWithRoute(Vector3 position, float radius, System.Drawing.Color color)
+        {
+            _blipRoute = new Blip(position, radius);
+            _blipRoute.Alpha = BLIP_ALPHA;
+            _blipRoute.Color = color;
+            _blipRoute.EnableRoute(color);
+
+            _blipRouteRadius = radius;
+            _blipRoutePosition = position;
+            ActivateStage(RemoveAreaWhenClose);
+        }
+
+        protected void RemoveAreaBlipWithRoute()
+        {
+            if (_blipRoute.Exists()) _blipRoute.Delete();
+        }
+
+        private void RemoveAreaWhenClose()
+        {
+            if(Game.LocalPlayer.Character.Position.DistanceTo(_blipRoutePosition) <= _blipRouteRadius)
+            {
+                RemoveAreaBlipWithRoute();
+                DeactivateStage(RemoveAreaWhenClose);
+            }
         }
 
         //TODO: to use with ShowAreaBlip()
@@ -134,8 +165,10 @@ namespace ScriptManager.Scripts
 
         private void InternalEnd()
         {
+            RemoveAreaBlipWithRoute();
+            RemoveAreaBlip();
             End();
-            Stop();
+            Stop(); 
         }
 
         public void SetScriptFinished(bool completed)
