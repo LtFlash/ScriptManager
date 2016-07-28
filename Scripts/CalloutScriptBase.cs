@@ -135,17 +135,9 @@ namespace ScriptManager.Scripts
         //TODO: to use with ShowAreaBlip()
         private void SetMinimapZoom(int zoomLevel)
             => Rage.Native.NativeFunction.Natives.SetRadarZoom(zoomLevel);
-        //{ //zoomLevel == 0..200
-        //    const ulong SET_RADAR_ZOOM = 0x096EF57A0C999BBA;
-        //    Rage.Native.NativeFunction.CallByHash<uint>(SET_RADAR_ZOOM, zoomLevel);
-        //}
 
         private void FlashMinimap()
             => Rage.Native.NativeFunction.Natives.FlashMinimapDisplay();
-        //{
-        //    const ulong FLASH_MINIMAP_DISPLAY = 0xF2DD778C22B15BDA;
-        //    Rage.Native.NativeFunction.CallByHash<uint>(FLASH_MINIMAP_DISPLAY);
-        //}
 
         private void RemoveAreaBlip()
         {
