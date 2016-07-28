@@ -7,8 +7,10 @@ namespace ScriptManager.Managers
 {
     public abstract class ScriptManagerBase : IScriptManager
     {
+        //PROTECTED
         protected ScriptStatus _scriptToRunInFiber { get; set; }
         protected List<ScriptStatus> _scripts = new List<ScriptStatus>();
+
         //PRIVATE
         private GameFiber _process;
         private bool _canRun = true;

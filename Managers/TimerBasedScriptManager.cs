@@ -33,15 +33,18 @@ namespace ScriptManager.Managers
         {
             _scriptRunTimer.Interval = GetRandomTimerInterval(); 
 
-            //check if any script is running
             if (IsAnyScriptRunning()) return;
 
             ScriptStatus _scriptToRun = GetNextScriptReadyToRun();
 
-            //start new script inside a GameFiber of the main loop
-            _scriptToRunInFiber = _scriptToRun;
+            StartScriptInsideMainLoop(_scriptToRun);
              
             Game.LogVerbose("ScriptManager.StartNextScript | interval: " + _scriptRunTimer.Interval);
+        }
+
+        private void StartScriptInsideMainLoop(ScriptStatus scriptToRun)
+        {
+            _scriptToRunInFiber = scriptToRun;
         }
 
         private ScriptStatus GetNextScriptReadyToRun()
@@ -53,6 +56,7 @@ namespace ScriptManager.Managers
             if (_idLastScript == -1) return _scripts.Count > 0 ? _scripts[0] : null;
             //last script on the list
             if (_scripts.Count - 1 == _idLastScript) return null;
+
             int _idNextScriptToRun = _scripts[_idLastScript].FinishedSuccessfully ? _idLastScript + 1 : _idLastScript;
             if (_scripts.Count - 1 >= _idNextScriptToRun) return _scripts[_idNextScriptToRun];
             else return null;

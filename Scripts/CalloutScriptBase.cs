@@ -1,20 +1,45 @@
 ﻿using Rage;
+using System.Media;
 
 namespace ScriptManager.Scripts
 {
     public abstract class CalloutScriptBase : BaseScript, ICalloutScript
     {
+        //PUBLIC
+        public float DistanceSoundPlayerClosingIn { get; set; } = 80f;
+        public bool PlaySoundPlayerClosingIn
+        {
+            set
+            {
+                if (value) ActivateStage(PlaySoundWhenPlayerNearby);
+                else DeactivateStage(PlaySoundWhenPlayerNearby);
+            }
+        }
+        public SoundPlayer SoundPlayerClosingIn
+        {
+            set
+            {
+                _soundPlayerClosingIn = value;
+            }
+        }
+
+        //PROTECTED
+        protected System.Windows.Forms.Keys KeyAcceptCallout { get; set; } = System.Windows.Forms.Keys.Y;
+        protected double Timeout { set { _callNotAcceptedTimer.Interval = value; } }
+
         //PRIVATE
         private const double TIME_CALL_NOT_ACCEPTED = 10000;
-        private System.Windows.Forms.Keys _keyAccept = System.Windows.Forms.Keys.Y;
+        private const float RADAR_ZOOM_LEVEL = 200f;
+        private const float BLIP_ALPHA = 0.3f;
+        private SoundPlayer _soundPlayerClosingIn = new SoundPlayer(Properties.Resources.CaseApproach);
         private System.Timers.Timer _callNotAcceptedTimer = new System.Timers.Timer(TIME_CALL_NOT_ACCEPTED);
         private bool _timeElapsed = false;
+        private bool _zoomOutMinimap = false;
         private Blip _blipArea;
         private Blip _blipRoute;
         private float _blipRouteRadius;
         private Vector3 _blipRoutePosition;
-        private const float BLIP_ALPHA = 0.3f;
-        private bool _zoomOutMinimap = false;
+        private Vector3 _callPosition;
         private readonly System.Drawing.Color _blipAreaColor = System.Drawing.Color.Blue;
 
         public CalloutScriptBase()
@@ -32,12 +57,18 @@ namespace ScriptManager.Scripts
             AddStage(InternalEnd);
             AddStage(RemoveAreaWhenClose);
 
+            AddStage(PlaySoundWhenPlayerNearby);
+
             ActivateStage(InternalInitialize);
         }
 
-        public override bool CanBeStarted()
+        private void PlaySoundWhenPlayerNearby()
         {
-            return true;
+            if (Vector3.Distance(Game.LocalPlayer.Character.Position, _callPosition) <= DistanceSoundPlayerClosingIn)
+            {
+                _soundPlayerClosingIn.Play();
+                DeactivateStage(PlaySoundWhenPlayerNearby);
+            }
         }
 
         private void InternalInitialize()
@@ -57,7 +88,7 @@ namespace ScriptManager.Scripts
             SwapStages(InternalInitialize, WaitForAcceptKey);
         }
 
-        public void DisplayCalloutInfo(string text)
+        protected void DisplayCalloutInfo(string text)
         {
             Game.DisplayNotification(text);
         }
@@ -67,6 +98,8 @@ namespace ScriptManager.Scripts
             _blipArea = new Blip(position, radius);
             _blipArea.Color = _blipAreaColor;
             _blipArea.Alpha = BLIP_ALPHA; //max val == 1f
+
+            _callPosition = position;
 
             _zoomOutMinimap = zoomOutMinimap;
             if (flashMinimap) FlashMinimap();
@@ -81,6 +114,7 @@ namespace ScriptManager.Scripts
 
             _blipRouteRadius = radius;
             _blipRoutePosition = position;
+
             ActivateStage(RemoveAreaWhenClose);
         }
 
@@ -100,16 +134,18 @@ namespace ScriptManager.Scripts
 
         //TODO: to use with ShowAreaBlip()
         private void SetMinimapZoom(int zoomLevel)
-        { //zoomLevel == 0..200
-            const ulong SET_RADAR_ZOOM = 0x096EF57A0C999BBA;
-            Rage.Native.NativeFunction.CallByHash<uint>(SET_RADAR_ZOOM, zoomLevel);
-        }
+            => Rage.Native.NativeFunction.Natives.SetRadarZoom(zoomLevel);
+        //{ //zoomLevel == 0..200
+        //    const ulong SET_RADAR_ZOOM = 0x096EF57A0C999BBA;
+        //    Rage.Native.NativeFunction.CallByHash<uint>(SET_RADAR_ZOOM, zoomLevel);
+        //}
 
         private void FlashMinimap()
-        {
-            const ulong FLASH_MINIMAP_DISPLAY = 0xF2DD778C22B15BDA;
-            Rage.Native.NativeFunction.CallByHash<uint>(FLASH_MINIMAP_DISPLAY);
-        }
+            => Rage.Native.NativeFunction.Natives.FlashMinimapDisplay();
+        //{
+        //    const ulong FLASH_MINIMAP_DISPLAY = 0xF2DD778C22B15BDA;
+        //    Rage.Native.NativeFunction.CallByHash<uint>(FLASH_MINIMAP_DISPLAY);
+        //}
 
         private void RemoveAreaBlip()
         {
@@ -125,7 +161,7 @@ namespace ScriptManager.Scripts
 
         private void WaitForAcceptKey()
         {
-            if(Game.IsKeyDown(_keyAccept))
+            if(Game.IsKeyDown(KeyAcceptCallout))
             {
                 RemoveAreaBlip();
                 SwapStages(WaitForAcceptKey, InternalAccepted);
@@ -134,7 +170,7 @@ namespace ScriptManager.Scripts
 
             if(_blipArea.Exists() && _zoomOutMinimap)
             {
-                Game.SetRadarZoomLevelThisFrame(200f);
+                Game.SetRadarZoomLevelThisFrame(RADAR_ZOOM_LEVEL);
             }
             
             if(_timeElapsed)
@@ -165,6 +201,7 @@ namespace ScriptManager.Scripts
 
         private void InternalEnd()
         {
+            _soundPlayerClosingIn.Dispose();
             RemoveAreaBlipWithRoute();
             RemoveAreaBlip();
             End();

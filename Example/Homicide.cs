@@ -12,11 +12,6 @@ namespace ScriptManager.Example
             _stagesOfInvestigation.StartScript("csi", false);
         }
 
-        public override bool CanBeStarted()
-        {
-            return true;
-        }
-
         protected override bool Initialize()
         {
             return true;

@@ -11,6 +11,9 @@ namespace ScriptManager.Scripts
         public bool Completed { get; protected set; } = false;
         public bool IsRunning { get; private set; } = false;
 
+        //PROTECTED
+        protected virtual ScriptStartController.IScriptStartController ScriptStartController { get; } = new ScriptStartController.UnconditionalStartController();
+
         //PRIVATE
         private GameFiber _process;
         private bool _canRun = true;
@@ -32,7 +35,10 @@ namespace ScriptManager.Scripts
             //empty, ctor called to check CanBeStarted()
         }
 
-        public abstract bool CanBeStarted();
+        public bool CanBeStarted()
+        {
+            return ScriptStartController.CanBeStarted();
+        }
 
         public void Start()
         {
