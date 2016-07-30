@@ -6,7 +6,7 @@ namespace ScriptManager.Managers
     {
         void AddScript(string id, Type typeImplementsIBaseScript);
         void StartScript(string id, bool checkIfCanBeStarted);
-        ScriptManagerBase.ScriptStatus this[string id] { get; }
+        ScriptStatus this[string id] { get; }
     }
 
     public interface ITimerBasedScriptManager : IScriptManager

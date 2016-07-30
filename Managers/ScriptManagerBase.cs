@@ -15,63 +15,6 @@ namespace ScriptManager.Managers
         private GameFiber _process;
         private bool _canRun = true;
 
-        public class ScriptStatus
-        {
-            public string Id { get; private set; }
-            public Type TypeOfBaseScript { get; private set; }
-            public Scripts.IScript Script { get; private set; }
-            public string NextScriptToRunId { get; private set; }
-            public bool Processed { get; set; } = false;
-
-            public bool FinishedSuccessfully
-            {
-                get
-                {
-                    return Script != null && Script.Completed;
-                }
-            }
-
-            public bool FinishedUnsuccessfully
-            {
-                get
-                {
-                    return Script != null && Script.HasFinished && !Script.Completed;
-
-                }
-            }
-
-            public bool IsRunning
-            {
-                get
-                {
-                    return Script != null && Script.IsRunning;
-                }
-            }
-
-            public void Start(bool checkIfCanBeStarted)
-            {
-                Scripts.IScript scriptToStart = CreateInstance(TypeOfBaseScript);
- 
-                if(!checkIfCanBeStarted || scriptToStart.CanBeStarted())
-                {
-                    Script = scriptToStart;
-                    Script.Start();
-                }
-            }
-
-            private Scripts.IScript CreateInstance(Type type)
-            {
-                return (Scripts.IScript)Activator.CreateInstance(type);
-            }
-
-            public ScriptStatus(string id, Type typeOfBaseScript, string nextScriptToRunId = "")
-            {
-                Id = id;
-                TypeOfBaseScript = typeOfBaseScript;
-                NextScriptToRunId = nextScriptToRunId;
-            }
-        }
-
         public ScriptManagerBase()
         {
             _process = new GameFiber(InternalProcess);
@@ -97,7 +40,7 @@ namespace ScriptManager.Managers
         public void StartScript(string id, bool checkIfCanBeStarted)
         {
             ScriptStatus ss = _scripts.FirstOrDefault(s => s.Id == id);
-            if (ss != null) ss.Start(checkIfCanBeStarted);
+            if (ss != null) ss.Start();
         }
 
         //public void StopScript(string id)
@@ -114,7 +57,7 @@ namespace ScriptManager.Managers
                 //with initialization from outside
                 if(_scriptToRunInFiber != null)
                 {
-                    _scriptToRunInFiber.Start(true);
+                    _scriptToRunInFiber.Start();
                     _scriptToRunInFiber = null;
                 }
 

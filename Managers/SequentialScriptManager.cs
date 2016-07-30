@@ -13,16 +13,17 @@
             {
                 if (_scripts[i].Processed) continue;
 
-                if(_scripts[i].FinishedSuccessfully)
+                if(_scripts[i].HasFinishedSuccessfully)
                 {
-                    StartScript(_scripts[i].NextScriptToRunId, true);
+                    //TODO: refactor!!!
+                    StartScript(_scripts[i].NextScriptToRunIds[0], true);
 
                     _scripts[i].Processed = true;
                 }
-                else if(_scripts[i].FinishedUnsuccessfully)
+                else if(_scripts[i].HasFinishedUnsuccessfully)
                 {
                     //restart the same script
-                    _scripts[i].Start(true);
+                    _scripts[i].Start();
                 }
             }
         }

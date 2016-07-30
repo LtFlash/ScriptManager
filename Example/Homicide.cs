@@ -2,7 +2,7 @@
 
 namespace ScriptManager.Example
 {
-    class Homicide : Scripts.BaseScript
+    class Homicide : Scripts.ScriptBase
     {
         Managers.TimerBasedScriptManager _stagesOfInvestigation = new Managers.TimerBasedScriptManager();
 

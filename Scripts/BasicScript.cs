@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ScriptManager.Scripts
 {
-    public abstract class BasicScript : BaseScript, IScript
+    public abstract class BasicScript : ScriptBase, IScript
     {
         public BasicScript()
         {

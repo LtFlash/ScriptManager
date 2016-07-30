@@ -50,14 +50,14 @@ namespace ScriptManager.Managers
         private ScriptStatus GetNextScriptReadyToRun()
         {
             //FindLastIndex returns -1 when no id found
-            int _idLastScript = _scripts.FindLastIndex(s => s.FinishedSuccessfully);
+            int _idLastScript = _scripts.FindLastIndex(s => s.HasFinishedSuccessfully);
 
             //no index found
             if (_idLastScript == -1) return _scripts.Count > 0 ? _scripts[0] : null;
             //last script on the list
             if (_scripts.Count - 1 == _idLastScript) return null;
 
-            int _idNextScriptToRun = _scripts[_idLastScript].FinishedSuccessfully ? _idLastScript + 1 : _idLastScript;
+            int _idNextScriptToRun = _scripts[_idLastScript].HasFinishedSuccessfully ? _idLastScript + 1 : _idLastScript;
             if (_scripts.Count - 1 >= _idNextScriptToRun) return _scripts[_idNextScriptToRun];
             else return null;
         } 

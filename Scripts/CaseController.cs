@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ScriptManager.Scripts
 {
-    public class CaseController : BaseScript
+    public class CaseController : ScriptBase
     {
         private Managers.TimerBasedScriptManager _cases = new Managers.TimerBasedScriptManager();
 

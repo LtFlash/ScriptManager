@@ -4,10 +4,10 @@ using Rage;
 
 namespace ScriptManager.Scripts
 {
-    public abstract class BaseScript
+    public abstract class ScriptBase
     {
         //PUBLIC
-        public bool HasFinished { get; private set; } = false;
+        public bool HasFinished { get; protected set; } = false;
         public bool Completed { get; protected set; } = false;
         public bool IsRunning { get; private set; } = false;
 
@@ -30,7 +30,7 @@ namespace ScriptManager.Scripts
             }
         }
 
-        public BaseScript()
+        public ScriptBase()
         {
             //empty, ctor called to check CanBeStarted()
         }

@@ -3,7 +3,7 @@ using System.Media;
 
 namespace ScriptManager.Scripts
 {
-    public abstract class CalloutScriptBase : BaseScript, ICalloutScript
+    public abstract class CalloutScriptBase : ScriptBase, ICalloutScript
     {
         //PUBLIC
         public float DistanceSoundPlayerClosingIn { get; set; } = 80f;
@@ -31,6 +31,7 @@ namespace ScriptManager.Scripts
         private const double TIME_CALL_NOT_ACCEPTED = 10000;
         private const float RADAR_ZOOM_LEVEL = 200f;
         private const float BLIP_ALPHA = 0.3f;
+
         private SoundPlayer _soundPlayerClosingIn = new SoundPlayer(Properties.Resources.CaseApproach);
         private System.Timers.Timer _callNotAcceptedTimer = new System.Timers.Timer(TIME_CALL_NOT_ACCEPTED);
         private bool _timeElapsed = false;
@@ -202,6 +203,7 @@ namespace ScriptManager.Scripts
 
         public void SetScriptFinished(bool completed)
         {
+            HasFinished = true;
             Completed = completed;
             InternalEnd();
         }
