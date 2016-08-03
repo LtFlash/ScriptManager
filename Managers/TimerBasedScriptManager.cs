@@ -8,7 +8,9 @@ namespace ScriptManager.Managers
         private double _intervalMax = 3 * 60 * 1000;
         private double _intervalMin = 1 * 60 * 1000;
 
-        public TimerBasedScriptManager(bool autoStart = false, double intervalMax = 180000, double intervalMin = 60000) : base()
+        public TimerBasedScriptManager(
+            bool autoStart = false, 
+            double intervalMax = 180000, double intervalMin = 60000) : base()
         {
             _intervalMax = intervalMax;
             _intervalMin = intervalMin;
@@ -49,6 +51,8 @@ namespace ScriptManager.Managers
 
         private ScriptStatus GetNextScriptReadyToRun()
         {
+            //TODO: extract functions
+
             //FindLastIndex returns -1 when no id found
             int _idLastScript = _scripts.FindLastIndex(s => s.HasFinishedSuccessfully);
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ScriptManager.Scripts
+﻿namespace ScriptManager.Scripts
 {
     /// <summary>
     /// Common interface for different types of scripts.
@@ -10,22 +8,9 @@ namespace ScriptManager.Scripts
         bool IsRunning { get; }
         bool HasFinished { get; }
         bool Completed { get; }
+
         bool CanBeStarted();
         void Start();
         void SetScriptFinished(bool completed);
-    }
-    /// <summary>
-    /// Callout-like script.
-    /// </summary>
-    public interface ICalloutScript : IScript
-    {
-        //void Accepted();
-        //void NotAccepted();
-    }
-
-    public interface ICalloutHourRangeScriptBase : ICalloutScript
-    {
-        TimeSpan HourStart { get; }
-        TimeSpan HourEnd { get; }
     }
 }

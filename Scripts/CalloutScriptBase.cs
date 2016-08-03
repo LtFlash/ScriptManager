@@ -3,7 +3,7 @@ using System.Media;
 
 namespace ScriptManager.Scripts
 {
-    public abstract class CalloutScriptBase : ScriptBase, ICalloutScript
+    public abstract class CalloutScriptBase : ScriptBase
     {
         //PUBLIC
         public float DistanceSoundPlayerClosingIn { get; set; } = 80f;
@@ -24,7 +24,8 @@ namespace ScriptManager.Scripts
         }
 
         //PROTECTED
-        protected System.Windows.Forms.Keys KeyAcceptCallout { get; set; } = System.Windows.Forms.Keys.Y;
+        protected System.Windows.Forms.Keys KeyAcceptCallout { get; set; } 
+            = System.Windows.Forms.Keys.Y;
         protected double Timeout { set { _callNotAcceptedTimer.Interval = value; } }
 
         //PRIVATE
@@ -32,6 +33,7 @@ namespace ScriptManager.Scripts
         private const float RADAR_ZOOM_LEVEL = 200f;
         private const float BLIP_ALPHA = 0.3f;
 
+        private System.Drawing.Color _blipAreaColor = System.Drawing.Color.Blue;
         private SoundPlayer _soundPlayerClosingIn = new SoundPlayer(Properties.Resources.CaseApproach);
         private System.Timers.Timer _callNotAcceptedTimer = new System.Timers.Timer(TIME_CALL_NOT_ACCEPTED);
         private bool _timeElapsed = false;
@@ -41,7 +43,6 @@ namespace ScriptManager.Scripts
         private float _blipRouteRadius;
         private Vector3 _blipRoutePosition;
         private Vector3 _callPosition;
-        private readonly System.Drawing.Color _blipAreaColor = System.Drawing.Color.Blue;
 
         public CalloutScriptBase()
         {
@@ -65,7 +66,8 @@ namespace ScriptManager.Scripts
 
         private void PlaySoundWhenPlayerNearby()
         {
-            if (Vector3.Distance(Game.LocalPlayer.Character.Position, _callPosition) <= DistanceSoundPlayerClosingIn)
+            if (Vector3.Distance(Game.LocalPlayer.Character.Position, _callPosition)
+                <= DistanceSoundPlayerClosingIn)
             {
                 _soundPlayerClosingIn.Play();
                 DeactivateStage(PlaySoundWhenPlayerNearby);
@@ -94,7 +96,9 @@ namespace ScriptManager.Scripts
             Game.DisplayNotification(text);
         }
 
-        protected void ShowAreaBlip(Vector3 position, float radius, bool zoomOutMinimap = true, bool flashMinimap = true)
+        protected void ShowAreaBlip(
+            Vector3 position, float radius, 
+            bool zoomOutMinimap = true, bool flashMinimap = true)
         {
             _blipArea = new Blip(position, radius);
             _blipArea.Color = _blipAreaColor;
@@ -106,7 +110,9 @@ namespace ScriptManager.Scripts
             if (flashMinimap) FlashMinimap();
         }
 
-        protected void ShowAreaWithRoute(Vector3 position, float radius, System.Drawing.Color color)
+        protected void ShowAreaWithRoute(
+            Vector3 position, float radius, 
+            System.Drawing.Color color)
         {
             _blipRoute = new Blip(position, radius);
             _blipRoute.Alpha = BLIP_ALPHA;
@@ -126,7 +132,8 @@ namespace ScriptManager.Scripts
 
         private void RemoveAreaWhenClose()
         {
-            if(Game.LocalPlayer.Character.Position.DistanceTo(_blipRoutePosition) <= _blipRouteRadius)
+            if(Game.LocalPlayer.Character.Position.DistanceTo(_blipRoutePosition)
+                <= _blipRouteRadius)
             {
                 RemoveAreaBlipWithRoute();
                 DeactivateStage(RemoveAreaWhenClose);
@@ -146,7 +153,8 @@ namespace ScriptManager.Scripts
             SetMinimapZoom(0);
         }
 
-        public void DisplayCalloutInfo(string textureDictionaryName, string textureName,
+        public void DisplayCalloutInfo(
+            string textureDictionaryName, string textureName,
             string title, string subtitle, string text)
         {
             Game.DisplayNotification(textureDictionaryName, textureName, title, subtitle, text);

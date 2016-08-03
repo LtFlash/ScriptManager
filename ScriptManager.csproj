@@ -47,6 +47,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="RagePluginHookSDK">
@@ -79,12 +80,18 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Resources\Logger.cs" />
     <Compile Include="Resources\ProcessHost.cs" />
+    <Compile Include="Resources\Zones.cs" />
+    <Compile Include="ScriptStartController\AreaBasedStartController.cs" />
+    <Compile Include="ScriptStartController\DelayedStartController.cs" />
     <Compile Include="ScriptStartController\Interface.cs" />
+    <Compile Include="ScriptStartController\ProximityStartController.cs" />
     <Compile Include="ScriptStartController\TimeRangeStartController.cs" />
     <Compile Include="ScriptStartController\UnconditionalStartController.cs" />
     <Compile Include="ScriptStarters\IScriptStarter.cs" />
     <Compile Include="ScriptStarters\ScriptStarterBase.cs" />
+    <Compile Include="ScriptStarters\SequentialScriptStarter.cs" />
     <Compile Include="ScriptStarters\TimerControlledScriptStarter.cs" />
     <Compile Include="Scripts\ScriptBase.cs" />
     <Compile Include="Scripts\BasicScript.cs" />

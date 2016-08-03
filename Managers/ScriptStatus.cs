@@ -60,7 +60,9 @@ namespace ScriptManager.Managers
         }
 
         //NOTE: to use with simple SM
-        public ScriptStatus(string id, Type typeOfBaseScript, string nextScriptToRunId = "")
+        public ScriptStatus(
+            string id, Type typeOfBaseScript, 
+            string nextScriptToRunId = "")
         {
             Id = id;
             TypeImplIScript = typeOfBaseScript;

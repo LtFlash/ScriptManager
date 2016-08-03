@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Rage;
+using ScriptManager.ScriptStartController;
 
 namespace ScriptManager.Scripts
 {
@@ -12,7 +13,8 @@ namespace ScriptManager.Scripts
         public bool IsRunning { get; private set; } = false;
 
         //PROTECTED
-        protected virtual ScriptStartController.IScriptStartController ScriptStartController { get; } = new ScriptStartController.UnconditionalStartController();
+        protected virtual IScriptStartController ScriptStartController
+        { get; } = new UnconditionalStartController();
 
         //PRIVATE
         private GameFiber _process;

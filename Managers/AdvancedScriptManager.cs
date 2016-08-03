@@ -29,8 +29,10 @@ namespace ScriptManager.Managers
             _stages.AddProcess(Process_WaitScriptsForFinish);
         }
 
-        public void AddScript(Type typeImplIScript, string id, Scripts.EInitModels initModel, 
-            string[] nextScriptsToRun, List<string[]> scriptsToFinishPrior, double timerIntervalMin, double timerIntervalMax)
+        public void AddScript(
+            Type typeImplIScript, string id, Scripts.EInitModels initModel, 
+            string[] nextScriptsToRun, List<string[]> scriptsToFinishPrior,
+            double timerIntervalMin, double timerIntervalMax)
         {
             if (!typeImplIScript.GetInterfaces().Contains(typeof(Scripts.IScript)))
             {
@@ -47,7 +49,18 @@ namespace ScriptManager.Managers
             AddNewScriptToList(s, id);
         }
 
-        public void AddScript(Type typeBaseScript, string id, Scripts.EInitModels initModel)
+        public void AddScript(
+            Type typeImplIScript, string id, Scripts.EInitModels initModel,
+            string[] nextScriptsToRun, List<string[]> scriptsToFinishPrior)
+        {
+            AddScript(typeImplIScript, id, initModel,
+                nextScriptsToRun, scriptsToFinishPrior,
+                DefaultTimerIntervalMin, DefaultTimerIntervalMax);
+        }
+
+        public void AddScript(
+            Type typeBaseScript, string id,
+            Scripts.EInitModels initModel)
         {
             AddScript(
                 typeBaseScript, id, initModel,
@@ -75,7 +88,8 @@ namespace ScriptManager.Managers
         {
             if(!_statusOfScripts.ContainsKey(id))
             {
-                throw new ArgumentException($"{nameof(HasScriptFinished)}: Script with id [{id}] does not exist.");
+                throw new ArgumentException(
+                    $"{nameof(HasScriptFinished)}: Script with id [{id}] does not exist.");
             }
 
             return _statusOfScripts[id];
@@ -137,25 +151,18 @@ namespace ScriptManager.Managers
             return from.Find(s => s.Id == id);
         }
 
-        private IScriptStarter CreateScriptStarterFromFirst(List<ScriptStatus> scriptsToRun)
-        {
-            IScriptStarter result = null;
-
-            if (scriptsToRun.Count < 1) return result;
-
-            result = CreateScriptStarter(scriptsToRun.First());
-
-            return result;
-        }
-
-        private IScriptStarter CreateScriptStarterByScriptId(string id, List<ScriptStatus> scriptsToRun)
+        private IScriptStarter CreateScriptStarterByScriptId(
+            string id, 
+            List<ScriptStatus> scriptsToRun)
         {
             //GetScriptById does not return null, it throws an exception instead
             ScriptStatus s = GetScriptById(id, scriptsToRun); 
             return CreateScriptStarter(s);
         }
 
-        private List<IScriptStarter> CreateScriptsStartersByIds(string[] ids, List<ScriptStatus> scripts)
+        private List<IScriptStarter> CreateScriptsStartersByIds(
+            string[] ids, 
+            List<ScriptStatus> scripts)
         {
             List<IScriptStarter> result = new List<IScriptStarter>();
 
@@ -182,7 +189,9 @@ namespace ScriptManager.Managers
             }
         }
 
-        private bool CheckIfNecessaryScriptsAreFinished(List<string[]> scripts, Dictionary<string, bool> status)
+        private bool CheckIfNecessaryScriptsAreFinished(
+            List<string[]> scripts, 
+            Dictionary<string, bool> status)
         {
             //algorithm tested, works
             List<bool> arrays = new List<bool>();
@@ -208,17 +217,18 @@ namespace ScriptManager.Managers
 
         private void RemoveSuccessfullyFinishedScripts(List<IScriptStarter> running)
         {
-            //NOTE: replace with RemoveScripts wherever possible to avoid unnecessary calculations
+            //NOTE: replace with RemoveScripts wherever possible to avoid unnecessary lookups
             for (int i = 0; i < running.Count; i++)
             {
-                if (running[i].FinishedSuccessfully)
+                if (running[i].HasFinishedSuccessfully)
                 {
                     running.RemoveAt(i);
                 }
             }
         }
 
-        private void RemoveScripts(List<IScriptStarter> scriptsToRemove, List<IScriptStarter> from)
+        private void RemoveScripts(
+            List<IScriptStarter> scriptsToRemove, List<IScriptStarter> from)
         {
             for (int i = 0; i < scriptsToRemove.Count; i++)
             {
@@ -226,17 +236,19 @@ namespace ScriptManager.Managers
             }
         }
 
-        private List<IScriptStarter> GetSuccessfullyFinishedScripts(List<IScriptStarter> running)
+        private List<IScriptStarter> GetSuccessfullyFinishedScripts(
+            List<IScriptStarter> running)
         {
             List<IScriptStarter> result = new List<IScriptStarter>();
 
             for (int i = 0; i < running.Count; i++)
             {
-                if(running[i].FinishedSuccessfully)
+                if(running[i].HasFinishedSuccessfully)
                 {
                     result.Add(running[i]);
 
-                    Game.LogVerbose(nameof(AdvancedScriptManager) + "." + nameof(GetSuccessfullyFinishedScripts) + ":" + running[i].Id);
+                    Game.LogVerbose(
+                        $"{nameof(AdvancedScriptManager)}.{nameof(GetSuccessfullyFinishedScripts)}:{running[i].Id}");
                 }
             }
 
@@ -251,15 +263,19 @@ namespace ScriptManager.Managers
             }
         }
 
-        private void MoveInactiveScriptToQueue(string scriptId, List<ScriptStatus> from, List<ScriptStatus> to)
+        private void MoveInactiveScriptToQueue(
+            string scriptId, 
+            List<ScriptStatus> from, List<ScriptStatus> to)
         {
             ScriptStatus s = GetScriptById(scriptId, from);
             to.Add(s);
             from.Remove(s);
-            Game.LogVerbose(nameof(AdvancedScriptManager) + "." + nameof(MoveInactiveScriptToQueue) + ":" + s.Id);
+            Game.LogVerbose($"{nameof(AdvancedScriptManager)}.{nameof(MoveInactiveScriptToQueue)}: {s.Id}");
         }
 
-        private void MoveScriptFromQueueToRunning(ScriptStatus scriptToRun, List<ScriptStatus> from, List<IScriptStarter> to)
+        private void MoveScriptFromQueueToRunning(
+            ScriptStatus scriptToRun, 
+            List<ScriptStatus> from, List<IScriptStarter> to)
         {
             IScriptStarter s = CreateScriptStarter(scriptToRun);
             s.Start();
