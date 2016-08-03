@@ -41,6 +41,11 @@
 
         public abstract void Start();
 
+        public Managers.ScriptStatus GetScriptStatus()
+        {
+            return script;
+        }
+
         private void InternalProcess()
         {
             if(StartScriptInThisTick/* && ss.IsRunning*/)

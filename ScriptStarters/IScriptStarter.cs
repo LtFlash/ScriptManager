@@ -8,5 +8,6 @@ namespace ScriptManager.ScriptStarters
         string Id { get; }
         string[] NextScriptsToRun { get; }
         void Start();
+        Managers.ScriptStatus GetScriptStatus();
     }
 }

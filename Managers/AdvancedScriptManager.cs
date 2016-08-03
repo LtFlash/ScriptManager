@@ -26,6 +26,7 @@ namespace ScriptManager.Managers
         public AdvancedScriptManager()
         {
             _stages.AddProcess(Process_RunScriptsFromQueue);
+            _stages.AddProcess(Process_UnsuccessfullyFinishedScripts);
             _stages.AddProcess(Process_WaitScriptsForFinish);
         }
 
@@ -98,6 +99,7 @@ namespace ScriptManager.Managers
         private void RegisterProcesses()
         {
             _stages.ActivateProcess(Process_RunScriptsFromQueue);
+            _stages.ActivateProcess(Process_UnsuccessfullyFinishedScripts);
             _stages.ActivateProcess(Process_WaitScriptsForFinish);
             _stages.Start();
         }
@@ -111,6 +113,27 @@ namespace ScriptManager.Managers
                     MoveScriptFromQueueToRunning(_queue[i], _queue, _running);
                 }
             }
+        }
+
+        private void Process_UnsuccessfullyFinishedScripts()
+        {
+            List<IScriptStarter> ufs = GetUnsuccessfullyFinishedScripts(_running);
+            ufs = GetScriptsWithSequentialStarter(ufs);
+
+            if (ufs.Count < 1) return;
+
+            for (int i = 0; i < ufs.Count; i++)
+            {
+                ScriptStatus s = ufs[i].GetScriptStatus();
+                ScriptStatus newScript = new ScriptStatus(
+                    s.Id, s.TypeImplIScript, Scripts.EInitModels.TimerBased,
+                    s.NextScriptToRunIds, new List<string[]>(), 
+                    s.TimerIntervalMin, s.TimerIntervalMax);
+
+                _running.Add(CreateScriptStarter(s));
+            }
+
+            RemoveScripts(_running, ufs);
         }
 
         private void Process_WaitScriptsForFinish()
@@ -137,25 +160,28 @@ namespace ScriptManager.Managers
 
         private bool CheckIfScriptCanBeStarted(ScriptStatus script)
         {
-            if (script.ScriptsToFinishPriorThis.Count < 1) return true;
-            else return CheckIfNecessaryScriptsAreFinished(script.ScriptsToFinishPriorThis, _statusOfScripts);
+            if (script.ScriptsToFinishPriorThis.Count < 1)
+                return true;
+            else
+                return CheckIfNecessaryScriptsAreFinished(
+                    script.ScriptsToFinishPriorThis, _statusOfScripts);
         }
 
         private ScriptStatus GetScriptById(string id, List<ScriptStatus> from)
         {
-            if(from.FirstOrDefault(s => s.Id == id) == null)
+            ScriptStatus s = from.FirstOrDefault(ss => ss.Id == id);
+            if(s == null)
             {
-                throw new ArgumentException($"{nameof(GetScriptById)}: Script with id [{id}] does not exist.");
+                throw new ArgumentException(
+                    $"{nameof(GetScriptById)}: Script with id [{id}] does not exist.");
             }
-
-            return from.Find(s => s.Id == id);
+            else return s;
         }
 
         private IScriptStarter CreateScriptStarterByScriptId(
             string id, 
             List<ScriptStatus> scriptsToRun)
         {
-            //GetScriptById does not return null, it throws an exception instead
             ScriptStatus s = GetScriptById(id, scriptsToRun); 
             return CreateScriptStarter(s);
         }
@@ -181,7 +207,7 @@ namespace ScriptManager.Managers
             switch (ss.InitModel)
             {
                 case Scripts.EInitModels.Sequential:
-                    return null;
+                    return new SequentialScriptStarter(ss, true);
 
                 case Scripts.EInitModels.TimerBased:
                 default:
@@ -193,7 +219,6 @@ namespace ScriptManager.Managers
             List<string[]> scripts, 
             Dictionary<string, bool> status)
         {
-            //algorithm tested, works
             List<bool> arrays = new List<bool>();
 
             for (int i = 0; i < scripts.Count; i++)
@@ -215,18 +240,6 @@ namespace ScriptManager.Managers
             }
         }
 
-        private void RemoveSuccessfullyFinishedScripts(List<IScriptStarter> running)
-        {
-            //NOTE: replace with RemoveScripts wherever possible to avoid unnecessary lookups
-            for (int i = 0; i < running.Count; i++)
-            {
-                if (running[i].HasFinishedSuccessfully)
-                {
-                    running.RemoveAt(i);
-                }
-            }
-        }
-
         private void RemoveScripts(
             List<IScriptStarter> scriptsToRemove, List<IScriptStarter> from)
         {
@@ -238,21 +251,37 @@ namespace ScriptManager.Managers
 
         private List<IScriptStarter> GetSuccessfullyFinishedScripts(
             List<IScriptStarter> running)
+            => GetScripts(running, s => s.HasFinishedSuccessfully);
+
+        private List<IScriptStarter> GetUnsuccessfullyFinishedScripts(
+            List<IScriptStarter> running)
+            => GetScripts(running, s => s.HasFinishedUnsuccessfully);
+        
+
+        private List<IScriptStarter> GetScriptsWithSequentialStarter(
+            List<IScriptStarter> running)
+            => GetScripts(running, s => s.GetScriptStatus()
+            .InitModel == Scripts.EInitModels.Sequential);
+        
+
+        private List<IScriptStarter> GetScripts(
+            List<IScriptStarter> running,
+            Func<IScriptStarter, bool> conditions)
         {
             List<IScriptStarter> result = new List<IScriptStarter>();
 
             for (int i = 0; i < running.Count; i++)
             {
-                if(running[i].HasFinishedSuccessfully)
+                if (conditions(running[i]))
                 {
                     result.Add(running[i]);
 
                     Game.LogVerbose(
-                        $"{nameof(AdvancedScriptManager)}.{nameof(GetSuccessfullyFinishedScripts)}:{running[i].Id}");
+                        $"{nameof(AdvancedScriptManager)}.{nameof(GetScripts)}:{running[i].Id}");
                 }
             }
 
-            return result;	
+            return result;
         }
 
         private void SetScriptStatusAsFinished(List<IScriptStarter> scripts)
