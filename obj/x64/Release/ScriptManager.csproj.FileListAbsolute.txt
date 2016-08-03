@@ -1,9 +1,0 @@
-D:\Misc\Programming\ScriptManager\ScriptManager\obj\x64\Release\ScriptManager.csprojResolveAssemblyReference.cache
-D:\Misc\Programming\ScriptManager\ScriptManager\bin\x64\Release\ScriptManager.dll
-D:\Misc\Programming\ScriptManager\ScriptManager\bin\x64\Release\ScriptManager.pdb
-D:\Misc\Programming\ScriptManager\ScriptManager\bin\x64\Release\RagePluginHookSDK.dll
-D:\Misc\Programming\ScriptManager\ScriptManager\bin\x64\Release\RagePluginHookSDK.xml
-D:\Misc\Programming\ScriptManager\ScriptManager\obj\x64\Release\ScriptManager.dll
-D:\Misc\Programming\ScriptManager\ScriptManager\obj\x64\Release\ScriptManager.pdb
-D:\Misc\Programming\ScriptManager\ScriptManager\obj\x64\Release\ScriptManager.Properties.Resources.resources
-D:\Misc\Programming\ScriptManager\ScriptManager\obj\x64\Release\ScriptManager.csproj.GenerateResource.Cache
